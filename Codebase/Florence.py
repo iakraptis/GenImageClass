@@ -2,7 +2,6 @@ import os
 import pathlib
 from glob import glob
 
-import requests
 import torch
 from PIL import Image
 from tqdm import tqdm
