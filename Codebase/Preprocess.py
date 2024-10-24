@@ -161,6 +161,6 @@ if __name__ == "__main__":
         / "DIV2K_train_HR"
         / "DIV2K_train_HR"
     )
-    output_dir = current_path / "Dataset" / "Images" / "Valid"
+    output_dir = current_path / "Dataset" / "Images" / "Train"
 
     process_images(input_dir, output_dir)
