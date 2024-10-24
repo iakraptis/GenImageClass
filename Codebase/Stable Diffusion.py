@@ -8,11 +8,8 @@ from diffusers import (
     SD3Transformer2DModel,
     StableDiffusion3Pipeline,
 )
-from huggingface_hub import login
 from PIL import Image
 from tqdm import tqdm
-
-login()
 
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
@@ -27,11 +24,13 @@ model_id = "stabilityai/stable-diffusion-3.5-large"
 nf4_config = BitsAndBytesConfig(
     load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16
 )
+# Have a .env file with HF_TOKEN containing the API key created from your Hugging Face account
 model_nf4 = SD3Transformer2DModel.from_pretrained(
     model_id,
     subfolder="transformer",
     quantization_config=nf4_config,
     torch_dtype=torch.bfloat16,
+    token=os.getenv("HF_TOKEN"),
 )
 
 pipeline = StableDiffusion3Pipeline.from_pretrained(
@@ -50,5 +49,3 @@ for filepath in tqdm(
         print(caption)
         image = pipeline(caption, num_inference_steps=20, guidance_scale=3.5).images[0]
         image.save(os.path.join(output_dir, image_filename))
-    else:
-        print(f"Skipping {image_filename} as it already exists.")
