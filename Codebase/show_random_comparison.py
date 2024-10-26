@@ -7,8 +7,8 @@ import cv2
 import matplotlib.pyplot as plt
 
 current_path = pathlib.Path().parent.absolute()
-generated_images_dir = current_path / "Dataset" / "Images" / "Generated"
-actual_images_dir = current_path / "Dataset" / "Images" / "Actual"
+generated_images_dir = current_path / "Dataset" / "Images" / "Train" / "Generated"
+actual_images_dir = current_path / "Dataset" / "Images" / "Train" / "Actual"
 
 generated_images_paths = glob(str(generated_images_dir / "*.png"))
 generated_images_paths = sorted(generated_images_paths)

@@ -1,5 +1,6 @@
 import os
 import pathlib
+import pickle
 from glob import glob
 
 import cv2
@@ -13,13 +14,21 @@ from diffusers import (
 from PIL import Image
 from tqdm import tqdm
 
+# Check if CUDA is available and set the device
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
+
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
 input_dir = current_path / "Dataset" / "Captions" / "Train"
 output_dir = current_path / "Dataset" / "Images" / "Train" / "Generated"
+validation_dir = current_path / "Dataset" / "Images" / "Validation" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
-generated_images = os.listdir(output_dir)
+# Read pickle file
+with open(current_path / "generated_images.pkl", "rb") as f:
+    generated_images = pickle.load(f)
+# generated_images = os.listdir(output_dir) + os.listdir(validation_dir)
 
 model_id = "stabilityai/stable-diffusion-3.5-large"
 
@@ -32,7 +41,6 @@ model_nf4 = SD3Transformer2DModel.from_pretrained(
     subfolder="transformer",
     quantization_config=nf4_config,
     torch_dtype=torch.bfloat16,
-    token=os.getenv("HF_TOKEN"),
 )
 
 pipeline = StableDiffusion3Pipeline.from_pretrained(
@@ -51,11 +59,11 @@ for filepath in tqdm(
         image = pipeline(caption, num_inference_steps=30, guidance_scale=3.5).images[0]
         image.save(os.path.join(output_dir, image_filename))
 
-        # # Convert image to numpy array
-        # image_np = np.array(image)
-        # # Step 2: Convert RGB to BGR for OpenCV
-        # image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-        # # Step 3: Display the image using OpenCV
-        # cv2.imshow("Image", image_bgr)
-        # cv2.waitKey(0)  # Waits for a key press to close the window
-        # cv2.destroyAllWindows()
+        # Convert image to numpy array
+        image_np = np.array(image)
+        # Step 2: Convert RGB to BGR for OpenCV
+        image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+        # Step 3: Display the image using OpenCV
+        cv2.imshow("Image", image_bgr)
+        cv2.waitKey(0)  # Waits for a key press to close the window
+        cv2.destroyAllWindows()

@@ -2,31 +2,39 @@ import pathlib
 
 import torch
 import torch.optim as optim
-from torch.nn import BCELoss, Conv2d, Linear, Module, ReLU, Sigmoid
+from torch.nn import BCELoss, Linear, Module, ReLU, Sequential, Sigmoid
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
+from torchvision.models import vgg16
 
 
-class Classifier(Module):
-    # Input images are 1024 * 1024
+class FakeImageClassifier(Module):
     def __init__(self):
-        super(Classifier, self).__init__()
-        self.conv1 = Conv2d(3, 32, 3, 1)
-        self.conv2 = Conv2d(32, 32, 3, 1)
-        self.fc1 = Linear(492032, 128)
-        self.fc2 = Linear(128, 10)
-        self.fc3 = Linear(10, 1)
+        super(FakeImageClassifier, self).__init__()
+
+        # Load the VGG16 model and remove its final classification layer
+        self.vgg = vgg16(pretrained=True)
+        self.vgg.classifier = Sequential(*list(self.vgg.classifier.children())[:-1])
+        # freeze the VGG layers
+        for param in self.vgg.parameters():
+            param.requires_grad = False
+
+        # Additional layers for binary classification
+        self.fc1 = Linear(4096, 128)
+        self.fc2 = Linear(128, 1)
+
         self.relu = ReLU()
         self.sigmoid = Sigmoid()
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = self.conv2(x)
-        x = x.view(x.size(0), -1)
+        # Pass input through VGG layers
+        x = self.vgg(x)
+
+        # Pass through custom layers for binary classification
         x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-        x = self.sigmoid(self.fc3(x))
+        x = self.sigmoid(self.fc2(x))
+
         return x
 
 
@@ -99,7 +107,7 @@ transform = transforms.Compose(
 
 if __name__ == "__main__":
     # Initialize model
-    model = Classifier()
+    model = FakeImageClassifier()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -116,7 +124,7 @@ if __name__ == "__main__":
     writer = SummaryWriter()
 
     # Train Model
-    train_model(model, train_loader, validation_loader, writer, epochs=10)
+    train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
     # save_model(model, "model.pth")
