@@ -4,6 +4,7 @@ import torch
 import torch.optim as optim
 from torch.nn import BCELoss, Conv2d, Linear, Module, ReLU, Sigmoid
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
 
 
@@ -28,35 +29,60 @@ class Classifier(Module):
         x = self.sigmoid(self.fc3(x))
         return x
 
-    def train(self, train_loader, epochs=10):
-        criterion = BCELoss()
-        optimizer = optim.Adam(self.parameters())
-        for epoch in range(epochs):
-            for i, data in enumerate(train_loader):
-                inputs, labels = data
-                optimizer.zero_grad()
-                predictions = self(inputs)
-                labels = labels.float()
-                loss = criterion(predictions.view(-1), labels)
-                loss.backward()
-                optimizer.step()
-                print(f"Epoch {epoch + 1}, Batch {i + 1}, Loss: {loss.item()}")
-        print("Finished Training")
 
-    def test(self, test_loader):
-        correct = 0
-        total = 0
+def train_model(
+    model: Module,
+    train_loader: DataLoader,
+    validation_loader: DataLoader,
+    writer: SummaryWriter,
+    epochs: int = 10,
+):
+    criterion = BCELoss()
+    optimizer = optim.Adam(model.parameters())
+    for epoch in range(epochs):
+        total_loss = 0.0
+        for i, data in enumerate(train_loader):
+            inputs, labels = data
+            inputs, labels = inputs.to(device), labels.to(device).float()
+            optimizer.zero_grad()
+            predictions = model(inputs)
+            loss = criterion(predictions.view(-1), labels)
+            total_loss += loss.item()
+            loss.backward()
+            optimizer.step()
+            print(f"Epoch {epoch + 1}, Batch {i + 1}, Loss: {loss.item()}")
+        print(f"===> Epoch {epoch + 1}, Total Train Loss: {total_loss}")
+        writer.add_scalar("Loss/train", total_loss, epoch)
+
         with torch.no_grad():
-            for data in test_loader:
-                images, labels = data
-                outputs = self(images)
-                predicted = torch.round(outputs)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-        print(f"Accuracy: {100 * correct / total}%")
+            total_loss = 0.0
+            for i, data in enumerate(validation_loader):
+                inputs, labels = data
+                inputs, labels = inputs.to(device), labels.to(device).float()
+                predictions = model(inputs)
+                loss = criterion(predictions.view(-1), labels)
+                total_loss += loss.item()
+            print(f"===> Epoch {epoch + 1}, Total Validation Loss: {total_loss}")
+            writer.add_scalar("Loss/validation", total_loss, epoch)
 
-    def save(self, path):
-        torch.save(self.state_dict(), path)
+    print("Finished Training")
+
+
+def test_model(model, test_loader):
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data in test_loader:
+            images, labels = data
+            outputs = model(images)
+            predicted = torch.round(outputs)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    print(f"Accuracy: {100 * correct / total}%")
+
+
+def save_model(model, path):
+    torch.save(model.state_dict(), path)
 
 
 transform = transforms.Compose(
@@ -72,10 +98,25 @@ transform = transforms.Compose(
 
 
 if __name__ == "__main__":
-    data_dir = pathlib.Path(__file__).parent.absolute() / "Dataset" / "Images"
-    image_dataset = datasets.ImageFolder(root=data_dir, transform=transform)
-    dataloader = DataLoader(image_dataset, batch_size=8, shuffle=True)
+    # Initialize model
     model = Classifier()
-    model.train(dataloader)
-    # model.test(test_loader)
-    # model.save("model.pth")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    # Initialize Train & Test Data
+    data_dir = pathlib.Path(__file__).parent.absolute() / "Dataset" / "Images"
+    train_dir = data_dir / "Train"
+    validation_dir = data_dir / "Validation"
+    train_dataset = datasets.ImageFolder(root=train_dir, transform=transform)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    validation_dataset = datasets.ImageFolder(root=validation_dir, transform=transform)
+    validation_loader = DataLoader(validation_dataset, batch_size=3, shuffle=False)
+
+    # Initialize Tensorboard
+    writer = SummaryWriter()
+
+    # Train Model
+    train_model(model, train_loader, validation_loader, writer, epochs=10)
+
+    # Save Model
+    # save_model(model, "model.pth")

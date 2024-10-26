@@ -27,9 +27,17 @@ The script uses a quantized Stable Diffusion 3.5 model in order to generate "fak
 Dataset
 ├── Captions
 │   └── Train
+|
 ├── Images
-│   ├── Generated
-│   ├── Actual
+|   |
+│   ├── Train
+|   |   ├── Actual
+|   |   └── Generated
+|   |
+│   └── Validation
+|       ├── Actual
+|       └── Generated
+|
 └── Original Dataset
     ├── DIV2K_train_HR
     │   └── DIV2K_train_HR

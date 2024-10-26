@@ -9,7 +9,7 @@ from transformers import AutoModelForCausalLM, AutoProcessor
 
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
-input_dir = current_path / "Dataset" / "Images" / "Actual"
+input_dir = current_path / "Dataset" / "Images" / "Train" / "Actual"
 output_dir = current_path / "Dataset" / "Captions" / "Train"
 
 # Ensure the output directory exists

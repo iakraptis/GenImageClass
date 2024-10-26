@@ -16,7 +16,7 @@ from tqdm import tqdm
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
 input_dir = current_path / "Dataset" / "Captions" / "Train"
-output_dir = current_path / "Dataset" / "Images" / "Generated"
+output_dir = current_path / "Dataset" / "Images" / "Train" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
 generated_images = os.listdir(output_dir)
