@@ -47,5 +47,5 @@ for filepath in tqdm(
     if image_filename not in generated_images:
         caption = open(filepath).read()
         print(caption)
-        image = pipeline(caption, num_inference_steps=20, guidance_scale=3.5).images[0]
+        image = pipeline(caption, num_inference_steps=40, guidance_scale=3.5).images[0]
         image.save(os.path.join(output_dir, image_filename))

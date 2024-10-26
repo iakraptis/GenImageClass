@@ -19,6 +19,7 @@ random_image = cv2.cvtColor(random_image, cv2.COLOR_BGR2RGB)
 os.path.basename(random_image_path)
 actual_image_path = actual_images_dir / os.path.basename(random_image_path)
 actual_image = cv2.imread(str(actual_image_path))
+actual_image = cv2.cvtColor(actual_image, cv2.COLOR_BGR2RGB)
 # show the images
 plt.figure(figsize=(10, 10))
 plt.subplot(1, 2, 1)
