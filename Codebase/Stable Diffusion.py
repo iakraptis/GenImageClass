@@ -3,7 +3,7 @@ import pathlib
 import pickle
 from glob import glob
 
-import cv2
+# import cv2
 import numpy as np
 import torch
 from diffusers import (
@@ -11,8 +11,12 @@ from diffusers import (
     SD3Transformer2DModel,
     StableDiffusion3Pipeline,
 )
-from PIL import Image
+
+# from huggingface_hub import login
+# from PIL import Image
 from tqdm import tqdm
+
+# login()
 
 # Check if CUDA is available and set the device
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -29,6 +33,10 @@ os.makedirs(output_dir, exist_ok=True)
 with open(current_path / "generated_images.pkl", "rb") as f:
     generated_images = pickle.load(f)
 # generated_images = os.listdir(output_dir) + os.listdir(validation_dir)
+# # save to pickle
+# with open(current_path / "generated_images.pkl", "wb") as f:
+#     pickle.dump(generated_images, f)
+# breakpoint()
 
 model_id = "stabilityai/stable-diffusion-3.5-large"
 
@@ -59,11 +67,11 @@ for filepath in tqdm(
         image = pipeline(caption, num_inference_steps=30, guidance_scale=3.5).images[0]
         image.save(os.path.join(output_dir, image_filename))
 
-        # Convert image to numpy array
-        image_np = np.array(image)
-        # Step 2: Convert RGB to BGR for OpenCV
-        image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-        # Step 3: Display the image using OpenCV
-        cv2.imshow("Image", image_bgr)
-        cv2.waitKey(0)  # Waits for a key press to close the window
-        cv2.destroyAllWindows()
+        # # Convert image to numpy array
+        # image_np = np.array(image)
+        # # Step 2: Convert RGB to BGR for OpenCV
+        # image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+        # # Step 3: Display the image using OpenCV
+        # cv2.imshow("Image", image_bgr)
+        # cv2.waitKey(0)  # Waits for a key press to close the window
+        # cv2.destroyAllWindows()

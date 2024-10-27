@@ -6,11 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-# datasets
-dataset/
-DATASET/
-Dataset/
-
 # Distribution / packaging
 .Python
 build/
@@ -166,3 +161,8 @@ cython_debug/
 
 *.ipynb
 runs/
+# datasets
+dataset/
+DATASET/
+Codebase/Dataset/Images
+Codebase/Dataset/Original Dataset
