@@ -21,9 +21,12 @@ The script uses a quantized Stable Diffusion 3.5 model in order to generate "fak
 ![App Screenshot](./asset/Figure_1.png)
 ![App Screenshot](./asset/Figure_2.png)
 
-# Dataset
+# Folder Structure
 
 ```
+asset
+Codebase
+Models
 Dataset
 ├── Captions
 │   └── Train

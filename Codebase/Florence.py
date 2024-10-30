@@ -9,8 +9,11 @@ from transformers import AutoModelForCausalLM, AutoProcessor
 
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
-input_dir = current_path / "Dataset" / "Images" / "Train" / "Actual"
-output_dir = current_path / "Dataset" / "Captions" / "Train"
+# Get parent directory
+parent_path = current_path.parent.absolute()
+
+input_dir = parent_path / "Dataset" / "Images" / "Valid" / "Actual"
+output_dir = parent_path / "Dataset" / "Captions" / "Valid"
 
 # Ensure the output directory exists
 os.makedirs(output_dir, exist_ok=True)

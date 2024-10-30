@@ -144,7 +144,7 @@ def save_model(model, path):
 train_transform = transforms.Compose(
     [
         # Resize to 128x128
-        transforms.Resize((128, 128)),
+        transforms.Resize((512, 512)),
         # Apply random horizontal flip
         transforms.RandomHorizontalFlip(),
         # Apply random rotation
@@ -158,7 +158,7 @@ train_transform = transforms.Compose(
 inference_transform = transforms.Compose(
     [
         # Resize to 128x128
-        transforms.Resize((128, 128)),
+        transforms.Resize((512, 512)),
         # Convert to tensor
         transforms.ToTensor(),
         # Normalize if needed (mean, std for each channel)

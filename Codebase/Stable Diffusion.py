@@ -24,9 +24,11 @@ print(f"Using device: {device}")
 
 # Get current directory
 current_path = pathlib.Path(__file__).parent.absolute()
-input_dir = current_path / "Dataset" / "Captions" / "Train"
-output_dir = current_path / "Dataset" / "Images" / "Train" / "Generated"
-validation_dir = current_path / "Dataset" / "Images" / "Validation" / "Generated"
+# Get parent directory
+parent_path = current_path.parent.absolute()
+input_dir = parent_path / "Dataset" / "Captions" / "Valid"
+output_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
+validation_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
 # Read pickle file
