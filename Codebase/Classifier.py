@@ -174,11 +174,11 @@ if __name__ == "__main__":
     model.to(device)
 
     # Initialize Train & Test Data
-    data_dir = pathlib.Path(__file__).parent.absolute() / "Dataset" / "Images"
+    data_dir = pathlib.Path(__file__).parent.parent.absolute() / "Dataset" / "Images"
     train_dir = data_dir / "Train"
-    validation_dir = data_dir / "Validation"
+    validation_dir = data_dir / "Valid"
     train_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
     validation_dataset = datasets.ImageFolder(
         root=validation_dir, transform=inference_transform
     )

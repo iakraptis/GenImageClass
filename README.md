@@ -29,17 +29,18 @@ Codebase
 Models
 Dataset
 ├── Captions
-│   └── Train
-|
+│   ├── Train
+|   └── Valid
 ├── Images
 |   |
 │   ├── Train
 |   |   ├── Actual
-|   |   └── Generated
-|   |
-│   └── Validation
+|   |   ├── sd35
+|   |   └── sd15
+│   └── Valid
 |       ├── Actual
-|       └── Generated
+|       ├── sd35
+|       └── sd15
 |
 └── Original Dataset
     ├── DIV2K_train_HR
