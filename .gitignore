@@ -166,3 +166,4 @@ dataset/
 DATASET/
 Codebase/Dataset/Images
 Codebase/Dataset/Original Dataset
+*.pth

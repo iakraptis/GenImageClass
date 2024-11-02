@@ -127,15 +127,25 @@ def show_images(images, labels, predictions):
 def test_model(model, test_loader):
     correct = 0
     total = 0
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    
+    model.eval()  # Set the model to evaluation mode
     with torch.no_grad():
         for data in test_loader:
             images, labels = data
+            images, labels = images.to(device), labels.to(device).float()
             outputs = model(images)
-            predicted = torch.round(outputs)
+            predicted = torch.round(outputs).view(-1)
+            
             total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-    print(f"Accuracy: {100 * correct / total}%")
 
+            correct += (predicted == labels).sum().item()
+    
+    
+    accuracy = 100 * correct / total
+    print(f"Accuracy: {accuracy:.2f}%")
+    model.train()  # Set the model back to training mode if needed
 
 def save_model(model, path):
     torch.save(model.state_dict(), path)
@@ -188,7 +198,13 @@ if __name__ == "__main__":
     writer = SummaryWriter()
 
     # Train Model
-    train_model(model, train_loader, validation_loader, writer, epochs=40)
+    #train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
-    # save_model(model, "model.pth")
+    #save_model(model, "model.pth")
+    
+
+    # Load Model
+    model.load_state_dict(torch.load("model.pth"))
+    # test model
+    test_model(model, validation_loader)
