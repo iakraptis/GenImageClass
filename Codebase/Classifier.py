@@ -63,6 +63,8 @@ def train_model(
     writer.add_text("Model", str(model))
     for epoch in range(epochs):
         total_loss = 0.0
+        correct = 0
+        total = 0
         for i, data in enumerate(train_loader):
             inputs, labels = data
             inputs, labels = inputs.to(device), labels.to(device).float()
@@ -70,27 +72,23 @@ def train_model(
             predictions = model(inputs)
             loss = criterion(predictions.view(-1), labels)
             total_loss += loss.item()
+            predicted = torch.round(predictions).view(-1)
+
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+            batch_accuracy = 100 * correct / total
             loss.backward()
             optimizer.step()
-            print(f"Epoch {epoch + 1}, Batch {i + 1}, Loss: {loss.item()}")
-        print(f"===> Epoch {epoch + 1}, Total Train Loss: {total_loss}")
-        writer.add_scalar("Loss/train", total_loss, epoch)
+            print(
+                f"Epoch {epoch + 1}, Batch {i + 1}, Batch Accuracy: {batch_accuracy:.2f}%"
+            )
+        train_accuracy = 100 * correct / total
+        print(f"===> Epoch {epoch + 1}, Accuracy: {train_accuracy:.2f}%")
+        writer.add_scalar("Accuracy/Train", train_accuracy, epoch)
 
-        with torch.no_grad():
-            total_loss = 0.0
-            for i, data in enumerate(validation_loader):
-                images, targets = data
-                inputs, labels = images.to(device), targets.to(device).float()
-                predictions = model(inputs)
-                cpu_predictions = predictions.cpu().detach().numpy()
-                if random() < 0.1:
-                    # add images to tensorboard
-                    grid = show_images(images, targets, cpu_predictions)
-                    writer.add_figure(f"{epoch},{i}", grid)
-                loss = criterion(predictions.view(-1), labels)
-                total_loss += loss.item()
-            print(f"===> Epoch {epoch + 1}, Total Validation Loss: {total_loss}")
-            writer.add_scalar("Loss/validation", total_loss, epoch)
+        test_accuracy = test_model(model, validation_loader)
+        writer.add_scalar("Accuracy/Test", test_accuracy, epoch)
 
     print("Finished Training")
 
@@ -128,8 +126,7 @@ def test_model(model, test_loader):
     correct = 0
     total = 0
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    
+
     model.eval()  # Set the model to evaluation mode
     with torch.no_grad():
         for data in test_loader:
@@ -137,15 +134,16 @@ def test_model(model, test_loader):
             images, labels = images.to(device), labels.to(device).float()
             outputs = model(images)
             predicted = torch.round(outputs).view(-1)
-            
+
             total += labels.size(0)
 
             correct += (predicted == labels).sum().item()
-    
-    
+
     accuracy = 100 * correct / total
     print(f"Accuracy: {accuracy:.2f}%")
     model.train()  # Set the model back to training mode if needed
+    return accuracy
+
 
 def save_model(model, path):
     torch.save(model.state_dict(), path)
@@ -198,13 +196,12 @@ if __name__ == "__main__":
     writer = SummaryWriter()
 
     # Train Model
-    #train_model(model, train_loader, validation_loader, writer, epochs=40)
+    train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
-    #save_model(model, "model.pth")
-    
+    save_model(model, "model.pth")
 
-    # Load Model
-    model.load_state_dict(torch.load("model.pth"))
-    # test model
-    test_model(model, validation_loader)
+    # # Load Model
+    # model.load_state_dict(torch.load("model.pth"))
+    # # test model
+    # test_model(model, validation_loader)
