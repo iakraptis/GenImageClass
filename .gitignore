@@ -164,6 +164,6 @@ runs/
 # datasets
 dataset/
 DATASET/
-Codebase/Dataset/Images
-Codebase/Dataset/Original Dataset
+Dataset/Images
+Dataset/Original Dataset
 *.pth

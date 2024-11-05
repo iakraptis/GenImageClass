@@ -7,17 +7,15 @@ import torch
 import torch.optim as optim
 from torch.nn import (
     BCELoss,
-    BCEWithLogitsLoss,
     Linear,
     Module,
     ReLU,
-    Sequential,
     Sigmoid,
 )
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
-from torchvision.models import vgg16
+from torchvision.models import ResNet50_Weights, resnet50, vgg16
 from torchvision.utils import make_grid
 
 
@@ -26,14 +24,16 @@ class FakeImageClassifier(Module):
         super(FakeImageClassifier, self).__init__()
 
         # Load the VGG16 model and remove its final classification layer
-        self.vgg = vgg16(pretrained=True)
-        self.vgg.classifier = Sequential(*list(self.vgg.classifier.children())[:-1])
+        # self.vgg = vgg16(pretrained=True)
+        # self.vgg.classifier = Sequential(*list(self.vgg.classifier.children())[:-1])
+        self.resnet = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+        self.resnet.fc = Linear(2048, 1024)
         # # freeze the VGG layers
         # for param in self.vgg.parameters():
         #     param.requires_grad = False
 
         # Additional layers for binary classification
-        self.fc1 = Linear(4096, 128)
+        self.fc1 = Linear(1024, 128)
         self.fc2 = Linear(128, 1)
 
         self.relu = ReLU()
@@ -41,7 +41,8 @@ class FakeImageClassifier(Module):
 
     def forward(self, x):
         # Pass input through VGG layers
-        x = self.vgg(x)
+        # x = self.vgg(x)
+        x = self.resnet(x)
 
         # Pass through custom layers for binary classification
         x = self.relu(self.fc1(x))
