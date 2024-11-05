@@ -62,6 +62,8 @@ def train_model(
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
     writer.add_graph(model, next(iter(train_loader))[0].to(device))
     writer.add_text("Model", str(model))
+    max_accuracy = 0
+    no_better_model_patience = 0
     for epoch in range(epochs):
         total_loss = 0.0
         correct = 0
@@ -88,8 +90,22 @@ def train_model(
         print(f"===> Epoch {epoch + 1}, Accuracy: {train_accuracy:.2f}%")
         writer.add_scalar("Accuracy/Train", train_accuracy, epoch)
 
+        # Test the model on the validation set
         test_accuracy = test_model(model, validation_loader)
         writer.add_scalar("Accuracy/Test", test_accuracy, epoch)
+
+        no_better_model_patience += 1
+
+        # If we have better model save it
+        if max_accuracy <= test_accuracy:
+            max_accuracy = test_accuracy
+            no_better_model_patience = 0
+            save_model(model, "model.pth")
+
+        # Early stop if there is no improvement for training
+        if no_better_model_patience >= 3:
+            print("Early Stopping")
+            break
 
     print("Finished Training")
 
