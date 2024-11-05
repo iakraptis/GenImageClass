@@ -100,10 +100,12 @@ def train_model(
         if max_accuracy <= test_accuracy:
             max_accuracy = test_accuracy
             no_better_model_patience = 0
+            print("Better Model Achieved, Saving Model")
             save_model(model, "model.pth")
 
         # Early stop if there is no improvement for training
         if no_better_model_patience >= 3:
+            print(f"Best Model Accuracy: {max_accuracy:.2f}%")
             print("Early Stopping")
             break
 
