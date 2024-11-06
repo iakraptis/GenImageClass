@@ -205,11 +205,11 @@ if __name__ == "__main__":
     train_dir = data_dir / "Train"
     validation_dir = data_dir / "Valid"
     train_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=20, shuffle=True)
     validation_dataset = datasets.ImageFolder(
         root=validation_dir, transform=inference_transform
     )
-    validation_loader = DataLoader(validation_dataset, batch_size=9, shuffle=True)
+    validation_loader = DataLoader(validation_dataset, batch_size=20, shuffle=True)
 
     # Initialize Tensorboard
     writer = SummaryWriter()
