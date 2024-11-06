@@ -172,13 +172,13 @@ train_transform = transforms.Compose(
     [
         # Resize to 128x128
         transforms.Resize((512, 512)),
-        # Apply random horizontal flip
+        transforms.RandomResizedCrop(512),
         transforms.RandomHorizontalFlip(),
-        # Apply random rotation
-        transforms.RandomRotation(10),
-        # Convert to tensor
+        transforms.RandomVerticalFlip(),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+        transforms.RandomPerspective(),
+        transforms.RandomRotation(45),
         transforms.ToTensor(),
-        # Normalize if needed (mean, std for each channel)
         transforms.Normalize((0.5,), (0.5,)),
     ]
 )
