@@ -161,9 +161,6 @@ cython_debug/
 
 *.ipynb
 runs/
-# datasets
-dataset/
-DATASET/
 Dataset/Images
 Dataset/Original Dataset
 *.pth
