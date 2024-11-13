@@ -172,7 +172,6 @@ def save_model(model, path):
 
 train_transform = transforms.Compose(
     [
-        # Resize to 128x128
         transforms.Resize((512, 512)),
         transforms.RandomResizedCrop(512),
         transforms.RandomHorizontalFlip(),
@@ -208,11 +207,13 @@ if __name__ == "__main__":
     validation_dir = data_dir / "Valid"
     train_dataset = datasets.ImageFolder(root=train_dir, transform=train_transform)
     train_loader = DataLoader(train_dataset, batch_size=20, shuffle=True)
+    # print the classes
+    print(train_dataset.classes)
     validation_dataset = datasets.ImageFolder(
         root=validation_dir, transform=inference_transform
     )
     validation_loader = DataLoader(validation_dataset, batch_size=20, shuffle=True)
-
+    
     # Initialize Tensorboard
     writer = SummaryWriter()
 
