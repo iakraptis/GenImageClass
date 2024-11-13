@@ -26,14 +26,14 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" / "Captions" / "Train"
-output_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated"
+input_dir = parent_path / "Dataset" / "Captions" / "Valid"
+output_dir = parent_path / "Dataset" / "Images" / "Valid" / "sd15"
 #validation_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
 # Read pickle file
-with open(current_path / "generated_images.pkl", "rb") as f:
-    generated_images = pickle.load(f)
+# with open(current_path / "generated_images.pkl", "rb") as f:
+#     generated_images = pickle.load(f)
 # generated_images = os.listdir(output_dir) + os.listdir(validation_dir)
 # # save to pickle
 # with open(current_path / "generated_images.pkl", "wb") as f:
@@ -43,16 +43,6 @@ with open(current_path / "generated_images.pkl", "rb") as f:
 #breakpoint()
 model_id = "sd-legacy/stable-diffusion-v1-5"
 
-# nf4_config = BitsAndBytesConfig(
-#     load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16
-# )
-# Have a .env file with HF_TOKEN containing the API key created from your Hugging Face account
-# model_nf4 = SD3Transformer2DModel.from_pretrained(
-#     model_id,
-#     subfolder="transformer",
-#     quantization_config=nf4_config,
-#     torch_dtype=torch.bfloat16,
-# )
 
 pipeline = StableDiffusionPipeline.from_pretrained(
     model_id,  torch_dtype=torch.bfloat16
