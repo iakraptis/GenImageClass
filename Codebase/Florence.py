@@ -12,8 +12,8 @@ current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
 
-input_dir = parent_path / "Dataset" / "Images" / "Valid" / "Actual"
-output_dir = parent_path / "Dataset" / "Captions" / "Valid"
+input_dir = parent_path / "Dataset" / "Images" / "faces_dataset_small"
+output_dir = parent_path / "Dataset" / "Captions" / "Faces"
 
 # Ensure the output directory exists
 os.makedirs(output_dir, exist_ok=True)
