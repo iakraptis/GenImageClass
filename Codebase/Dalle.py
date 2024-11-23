@@ -22,10 +22,10 @@ client = AzureOpenAI(
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" / "Captions" / "Faces"
-output_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated" / "Faces_Dalle"
+input_dir = parent_path / "Dataset" / "Captions" / "Train"
+output_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated" / "Images_Dalle"
 validation_dir = (
-    parent_path / "Dataset" / "Images" / "Valid" / "Generated" / "Faces_Dalle"
+    parent_path / "Dataset" / "Images" / "Valid" / "Generated" / "Images_Dalle"
 )
 os.makedirs(output_dir, exist_ok=True)
 os.makedirs(validation_dir, exist_ok=True)

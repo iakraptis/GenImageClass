@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.optim as optim
+from adopt import ADOPT
 from torch.nn import (
     BCELoss,
     Linear,
@@ -59,7 +60,8 @@ def train_model(
     epochs: int = 10,
 ):
     criterion = BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    # optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = ADOPT(model.parameters(), lr=1e-3)
     writer.add_graph(model, next(iter(train_loader))[0].to(device))
     writer.add_text("Model", str(model))
     max_accuracy = 0
