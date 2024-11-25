@@ -19,6 +19,9 @@ def predict_image(model, image_path, device):
     # Make prediction
     with torch.no_grad():
         outputs = model(image)
+        rounded_outputs = torch.round(outputs, decimals=2)
+
+        print(rounded_outputs)
         predicted_class = torch.argmax(outputs, dim=1).item()
 
     return predicted_class
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     model = load_model(model_path, device)
 
     # Path to the image to be predicted
-    image_path = r"asset\0801dl3.jpg"
+    image_path = r"asset\0801sd35.png"
 
     # Predict the class of the image
     predicted_class = predict_image(model, image_path, device)

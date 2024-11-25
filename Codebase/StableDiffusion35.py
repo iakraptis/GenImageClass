@@ -26,19 +26,19 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" / "Captions" / "Valid"
-output_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
-validation_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
+input_dir = parent_path / "Dataset" /"Original Dataset" /"ffhq_captions" / "Train"
+output_dir = parent_path / "Dataset" / "Images" / "Train" / "sd35"
+#validation_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
-# Read pickle file
-with open(current_path / "generated_images.pkl", "rb") as f:
-    generated_images = pickle.load(f)
-# generated_images = os.listdir(output_dir) + os.listdir(validation_dir)
-# # save to pickle
-# with open(current_path / "generated_images.pkl", "wb") as f:
-#     pickle.dump(generated_images, f)
-# breakpoint()
+# # Read pickle file
+# with open(current_path / "generated_images.pkl", "rb") as f:
+#     generated_images = pickle.load(f)
+generated_images = os.listdir(output_dir) 
+# save to pickle
+with open(current_path / "generated_images.pkl", "wb") as f:
+    pickle.dump(generated_images, f)
+breakpoint()
 
 model_id = "stabilityai/stable-diffusion-3.5-large"
 

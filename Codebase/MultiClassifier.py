@@ -103,7 +103,7 @@ def train_model(
             max_accuracy = test_accuracy
             no_better_model_patience = 0
             print("Better Model Achieved, Saving Model")
-            save_model(model, "triplemodel.pth")
+            save_model(model, "triplemodel2.pth")
 
         # Early stop if there is no improvement for training
         if no_better_model_patience >= 3:
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
-    save_model(model, "triplemodel.pth")
+    save_model(model, "triplemodel2.pth")
 
     # # Load Model
     # model.load_state_dict(torch.load("model.pth"))

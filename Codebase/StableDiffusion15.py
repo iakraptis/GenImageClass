@@ -26,8 +26,8 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" / "Captions" / "Valid"
-output_dir = parent_path / "Dataset" / "Images" / "Valid" / "sd15"
+input_dir = parent_path / "Dataset" /"Original Dataset" /"ffhq_captions" / "Train"
+output_dir = parent_path / "Dataset" / "Images" / "Train" / "sd15"
 #validation_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -57,9 +57,13 @@ for filepath in tqdm(
     desc="Generating images with Stable Diffusion 1.5",
 ):
     image_filename = f"{os.path.basename(filepath)[:-4]}.png"
-    print(image_filename)
+    print(f"\n{image_filename}")
 
     if image_filename :
+        # if the image filename is 2038 then break
+        if image_filename == '2038.png':
+            break
+
         caption = open(filepath).read()
         # print(f"Generating image for caption: {caption}")
         image = pipeline(caption).images[0]

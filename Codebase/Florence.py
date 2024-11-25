@@ -15,6 +15,9 @@ parent_path = current_path.parent.absolute()
 input_dir = parent_path / "Dataset" / "Images" / "Valid" / "Actual"
 output_dir = parent_path / "Dataset" / "Captions" / "Valid"
 
+# input_dir = parent_path / "Dataset" / "Original Dataset" / "faces_dataset_small_renamed" 
+# output_dir = parent_path / "Dataset" / "Original Dataset" / "ffhq_captions"
+
 # Ensure the output directory exists
 os.makedirs(output_dir, exist_ok=True)
 
