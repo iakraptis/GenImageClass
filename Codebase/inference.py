@@ -35,7 +35,7 @@ if __name__ == "__main__":
     model = load_model(model_path, device)
 
     # Path to the image to be predicted
-    image_path = r"asset\0801sd35.png"
+    image_path = r"asset\0801sd15.png"
 
     # Predict the class of the image
     predicted_class = predict_image(model, image_path, device)

@@ -221,7 +221,7 @@ if __name__ == "__main__":
     train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
-    save_model(model, "triplemodel2.pth")
+    save_model(model, "triplemodel.pth")
 
     # # Load Model
     # model.load_state_dict(torch.load("model.pth"))

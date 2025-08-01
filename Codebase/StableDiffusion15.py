@@ -60,9 +60,8 @@ for filepath in tqdm(
     print(f"\n{image_filename}")
 
     if image_filename :
-        # if the image filename is 2038 then break
-        if image_filename == '2038.png':
-            break
+
+
 
         caption = open(filepath).read()
         # print(f"Generating image for caption: {caption}")
