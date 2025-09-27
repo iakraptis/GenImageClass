@@ -26,8 +26,8 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" /"Captions" / "Train"
-output_dir = parent_path / "Dataset" / "Images" / "Train" / "sd15"
+input_dir = parent_path / "Dataset" /"Captions" / "Valid"
+output_dir = parent_path / "Dataset" / "Images" / "Valid" / "sd15"
 #validation_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -43,7 +43,7 @@ model_id = "sd-legacy/stable-diffusion-v1-5"
 pipeline = StableDiffusionPipeline.from_pretrained(
     model_id,  torch_dtype=torch.bfloat16
 )
-pipeline.enable_model_cpu_offload()
+#pipeline.enable_model_cpu_offload()
 #set to cuda
 pipeline=pipeline.to(device)
 

@@ -20,6 +20,7 @@ from torchvision.models import ResNet50_Weights, resnet50, vgg16
 from torchvision.utils import make_grid
 
 
+
 class FakeImageClassifier(Module):
     def __init__(self):
         super(FakeImageClassifier, self).__init__()
@@ -33,9 +34,10 @@ class FakeImageClassifier(Module):
         # for param in self.vgg.parameters():
         #     param.requires_grad = False
 
-        # Additional layers for binary classification
-        self.fc1 = Linear(1024, 128)
-        self.fc2 = Linear(128, 3)
+        # Additional layers for multi classification
+        self.fc1 = Linear(1024, 512)
+        self.fc2 = Linear(512, 128)
+        self.fc3 = Linear(128, 4)
 
         self.relu = ReLU()
         self.sigmoid = Sigmoid()
@@ -47,7 +49,8 @@ class FakeImageClassifier(Module):
 
         # Pass through custom layers for binary classification
         x = self.relu(self.fc1(x))
-        x = self.sigmoid(self.fc2(x))
+        x = self.relu(self.fc2(x))
+        x = self.fc3(x)
 
         return x
 
@@ -61,7 +64,15 @@ def train_model(
 ):
     criterion = CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
-    writer.add_graph(model, next(iter(train_loader))[0].to(device))
+    # Try to add graph to tensorboard if possible; guard in case of shape/device issues
+    try:
+        sample_inputs = next(iter(train_loader))[0]
+        writer.add_graph(model, sample_inputs.to(next(model.parameters()).device))
+    except Exception:
+        # Skip graph logging if it fails (common with complex models/transforms)
+        pass
+    # Ensure model is on the same device as inputs/parameters
+    model.to(next(model.parameters()).device)
     writer.add_text("Model", str(model))
     max_accuracy = 0
     no_better_model_patience = 0
@@ -125,13 +136,15 @@ def show_images(images, labels, predictions):
     for i in range(batch_size):
         row = i // 3
         col = i % 3
-        # Show image and add title with label and prediction
-        ax[row, col].imshow(np.transpose(images[i], (1, 2, 0)))
-        prer_percentage = predictions[i][0] * 100
-        pred_class = "1" if prer_percentage > 50 else "0"
-        ax[row, col].set_title(
-            f"Label: {labels[i]}, Pred: {pred_class} ({prer_percentage:.2f}%)"
-        )
+        # Move image to cpu and convert to numpy for matplotlib
+        img = images[i].detach().cpu()
+        # Unnormalize assuming Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
+        img = img * 0.5 + 0.5
+        img_np = np.clip(np.transpose(img.numpy(), (1, 2, 0)), 0, 1)
+        ax[row, col].imshow(img_np)
+        # Get predicted class index
+        pred_class = int(torch.argmax(predictions[i]).item())
+        ax[row, col].set_title(f"Label: {labels[i]}, Pred: {pred_class}")
         ax[row, col].axis("off")
 
     # Hide any unused subplots if batch_size < 9
@@ -146,9 +159,12 @@ def show_images(images, labels, predictions):
 def test_model(model, test_loader):
     correct = 0
     total = 0
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Preserve original device of model parameters if set
+    try:
+        device = next(model.parameters()).device
+    except StopIteration:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    
     model.eval()  # Set the model to evaluation mode
     with torch.no_grad():
         for data in test_loader:
@@ -170,6 +186,7 @@ def save_model(model, path):
     torch.save(model.state_dict(), path)
 
 
+# Use 3-channel mean/std for RGB images
 train_transform = transforms.Compose(
     [
         transforms.Resize((512, 512)),
@@ -180,17 +197,14 @@ train_transform = transforms.Compose(
         transforms.RandomPerspective(),
         transforms.RandomRotation(45),
         transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,)),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     ]
 )
 inference_transform = transforms.Compose(
     [
-        # Resize to 128x128
         transforms.Resize((512, 512)),
-        # Convert to tensor
         transforms.ToTensor(),
-        # Normalize if needed (mean, std for each channel)
-        transforms.Normalize((0.5,), (0.5,)),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     ]
 )
 
@@ -221,9 +235,9 @@ if __name__ == "__main__":
     train_model(model, train_loader, validation_loader, writer, epochs=40)
 
     # Save Model
-    save_model(model, "triplemodel.pth")
+    save_model(model, "quadmodel.pth")
 
     # # Load Model
-    # model.load_state_dict(torch.load("model.pth"))
+    # model.load_state_dict(torch.load("quadmodel.pth"))
     # # test model
     # test_model(model, validation_loader)

@@ -26,8 +26,8 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" /"Captions" / "Train"
-output_dir = parent_path / "Dataset" / "Images" / "Train" / "sd35"
+input_dir = parent_path / "Dataset" /"Captions" / "Valid"
+output_dir = parent_path / "Dataset" / "Images" / "Valid" / "sd35"
 #validation_dir = parent_path / "Dataset" / "Images" / "Valid" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
