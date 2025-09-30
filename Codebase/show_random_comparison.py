@@ -7,7 +7,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 current_path = pathlib.Path(__file__).parent.parent.absolute()
-generated_images_dir = current_path / "Dataset" / "Images" / "Train" / "Generated"
+generated_images_dir = current_path / "Dataset" / "Images" / "Train" / "sd35"
 actual_images_dir = current_path / "Dataset" / "Images" / "Train" / "Actual"
 print(generated_images_dir)
 print(actual_images_dir)
