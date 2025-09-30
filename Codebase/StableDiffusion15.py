@@ -26,40 +26,39 @@ print(f"Using device: {device}")
 current_path = pathlib.Path(__file__).parent.absolute()
 # Get parent directory
 parent_path = current_path.parent.absolute()
-input_dir = parent_path / "Dataset" / "Captions" / "Valid"
+input_dir = parent_path / "Dataset" /"Captions" / "Valid"
 output_dir = parent_path / "Dataset" / "Images" / "Valid" / "sd15"
 #validation_dir = parent_path / "Dataset" / "Images" / "Train" / "Generated"
 os.makedirs(output_dir, exist_ok=True)
 
-# Read pickle file
-# with open(current_path / "generated_images.pkl", "rb") as f:
-#     generated_images = pickle.load(f)
-# generated_images = os.listdir(output_dir) + os.listdir(validation_dir)
-# # save to pickle
-# with open(current_path / "generated_images.pkl", "wb") as f:
-#     pickle.dump(generated_images, f)
-# breakpoint()
-#print (generated_images)
-#breakpoint()
+# check the output directory for existing images. If an image with the same name exists, skip generating it.
+existing_images = set(os.listdir(output_dir))
+
+
+
+
 model_id = "sd-legacy/stable-diffusion-v1-5"
 
 
 pipeline = StableDiffusionPipeline.from_pretrained(
     model_id,  torch_dtype=torch.bfloat16
 )
-pipeline.enable_model_cpu_offload()
+#pipeline.enable_model_cpu_offload()
 #set to cuda
-#pipeline=pipeline.to(device)
+pipeline=pipeline.to(device)
 
-# Iterate over all images in the input directory
+# Iterate over all txt files in the input directory
 for filepath in tqdm(
     glob(os.path.join(input_dir, "*.txt")),
     desc="Generating images with Stable Diffusion 1.5",
 ):
     image_filename = f"{os.path.basename(filepath)[:-4]}.png"
-    print(image_filename)
+    print(f"\n{image_filename}")
 
-    if image_filename :
+    if image_filename not in existing_images:
+
+
+
         caption = open(filepath).read()
         # print(f"Generating image for caption: {caption}")
         image = pipeline(caption).images[0]
