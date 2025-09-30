@@ -1,21 +1,21 @@
 # GenImageClass
-This project is all about to train a classifier in order to distinguish if an image is real or fake. We use **Image -> Caption -> Image** and then we use this dataset in order to train various classifiers to distinguish the fake ones!
+This project aim is to train classifier in order to distinguish if an image is real or ai generated. We use an **Image -> Caption -> Image** proccess and then we use this dataset in order to train various classifiers to distinguish the fake ones!
 
 ## TODO List:
-- [ ] Add requirements txt or a yaml for conda
+- [ ] Investigate more suitable models
 - [ ] Add Vscode for standarization (formaters)?
-- [ ] Discussion about the Dataset Structure
+
   
 
 # Preprocess.py
 
-This script iterates over a dataset, and standarizes every image to be 1024*1024
+This script iterates over a dataset an image dataset and standarizes every image to be 1024*1024. It achieves this by either upscaling an image or cropping it.
 
 # Florence.py
-The florence script is used to parse Actual Images ang generate captions for each one in order to be used later on the reverse process.
+The florence script is used to parse Actual Images ang generate captions for each one in order to be used later on the image creation process.
 
 # Stable Diffusion.py
-The script uses a quantized Stable Diffusion 3.5 model in order to generate "fake" images from the captions similar to the actual ones.
+These scripts use Stable Diffusion 3.5, Stable Diffusion 1.5 and Sana 1.5 in order to generate "fake" images from the captions similar to the actual ones.
 
 ## Examples
 ![App Screenshot](./asset/Figure_1.png)
@@ -36,11 +36,13 @@ Dataset
 │   ├── Train
 |   |   ├── Actual
 |   |   ├── sd35
-|   |   └── sd15
+|   |   ├── sd15
+|   |   └── sana15
 │   └── Valid
 |       ├── Actual
 |       ├── sd35
-|       └── sd15
+|       ├── sd15
+|       └── sana15
 |
 └── Original Dataset
     ├── DIV2K_train_HR
